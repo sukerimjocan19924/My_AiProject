@@ -1,0 +1,30 @@
+@use './styles/variables' as *;
+@use './styles/mixins' as *;
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: $color-gray-50;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 32rem 1fr; // 좌측 사이드바 + 우측 메인
+  gap: $space-8;
+  flex: 1;
+  padding: $space-8;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: $space-8;
+}
+
+.content {
+  @include card-base;
+  padding: $space-12;
+  background: $color-white;
+  border-radius: $radius-md;
+}

@@ -20,7 +20,7 @@ const Header = () => {
         <div className={styles.logoIcon}>
           <img src="/icons/icon-logo.svg" alt="logo" />
         </div>
-        <h1>My Project</h1>
+        <h1>나의 작품 아카이브</h1>
       </div>
 
       <div className={styles.actions}>
@@ -29,8 +29,8 @@ const Header = () => {
             className={styles.categorySelect}
             onClick={() => setOpen(!open)} >
             <span className={styles.categoryLabel}>
-                <img src={categoryIcons[category]} alt={category} />
-                {category}
+              <img src={categoryIcons[category]} alt={category} />
+              {category}
             </span>
             <img src="/icons/icon-arrow-down.svg" alt="dropdown" />
           </button>

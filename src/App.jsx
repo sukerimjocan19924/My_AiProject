@@ -1,7 +1,9 @@
 import React from 'react'
+import './App.scss'
 import Header from './components/header/Header'
 import Form from './components/form/Form'
-import List from './components/list/List'
+import Stats from './components/stats/Stats'
+import ArchiveTabs from './components/archive/ArchiveTabs'
 
 function App() {
 
@@ -9,9 +11,15 @@ function App() {
     <div className="app">
       <Header />
 
-      <main>
-        <Form />
-        <List />
+      <main className="layout">
+        <aside className="sidebar">
+          <Form />
+          <Stats />
+        </aside>
+        
+        <section className="content">
+          <ArchiveTabs />
+        </section>
       </main>
     </div>
   )
