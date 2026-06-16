@@ -1,0 +1,81 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.header {
+    @include flex-between;
+    padding: 0 $space-8;
+    height: 5.6rem;
+    background: $color-primary-950;
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: $space-5;
+
+        .logoIcon {
+            @include flex-center;
+            width: 3.2rem;
+            height: 3.2rem;
+            border-radius: $radius-md;
+            background: $color-primary-600;
+
+            img {
+                width: 1.8rem;
+                height: 1.8rem;
+            }
+        }
+
+        h1 {
+            color: $color-white;
+            font-size: $font-size-xl;
+            font-weight: 700;
+        }
+    }
+
+    .actions {
+        display: flex;
+        align-items: center;
+        gap: $space-4;
+
+        .archiveBtn {
+            display: flex;
+            align-items: center;
+            gap: $space-2;
+            padding: 0 $space-5;
+            color: $color-white;
+            font-size: $font-size-sm;
+            font-weight: 500;
+            transition: transform 0.2s ease;
+
+            img {
+                width: 1.6rem;
+                height: 1.6rem;
+            }
+
+            &:hover {
+                transform: translateX(-2px);
+            }
+        }
+
+        .favoriteBtn {
+            display: flex;
+            align-items: center;
+            gap: $space-3;
+            height: $h-nav-btn;
+            padding: 0 $space-6;
+            border-radius: $radius-md;
+            background: $color-primary-600;
+            color: $color-white;
+            font-weight: 600;
+
+            img {
+                width: 1.5rem;
+                height: 1.5rem;
+            }
+
+            &:hover {
+                background: $color-primary-700;
+            }
+        }
+    }
+}

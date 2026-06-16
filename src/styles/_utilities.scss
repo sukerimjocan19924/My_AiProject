@@ -1,0 +1,82 @@
+@use './variables' as *;
+@use './mixins' as *;
+
+/* Text */
+.text-xs {
+  font-size: $font-size-xs;
+}
+
+.text-sm {
+  font-size: $font-size-sm;
+}
+
+.text-base {
+  font-size: $font-size-base;
+}
+
+.text-lg {
+  font-size: $font-size-lg;
+}
+
+.text-muted {
+  color: $color-gray-400;
+}
+
+.text-body {
+  color: $color-gray-500;
+}
+
+.text-primary {
+  color: $color-primary-600;
+}
+
+
+/* Button */
+.btn {
+  @include btn-base;
+
+  height: $h-btn-lg;
+  padding: 0 $space-8;
+  border-radius: $radius-lg;
+
+  &--primary {
+    background: $color-primary-600;
+    color: $color-white;
+  }
+
+  &--success {
+    background: $color-success-600;
+    color: $color-white;
+  }
+}
+
+
+/* Icon */
+.icon {
+  width: $h-btn-sm;
+  height: $h-btn-sm;
+  border-radius: $radius-md;
+}
+
+
+/* Tags */
+.tag-anime {
+  @include category-tag(
+    $color-primary-100,
+    $color-primary-600
+  );
+}
+
+.tag-drama {
+  @include category-tag(
+    $color-success-50,
+    $color-success-600
+  );
+}
+
+.tag-movie {
+  @include category-tag(
+    $color-info-50,
+    $color-info-600
+  );
+}

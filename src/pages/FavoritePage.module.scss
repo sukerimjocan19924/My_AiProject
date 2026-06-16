@@ -1,0 +1,158 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+.favoritePage {
+    display: flex;
+    flex-direction: column;
+    gap: $space-6;
+
+    .summaryBox {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: .8rem;
+        border-bottom: 1px solid $color-gray-200;
+
+        .summaryLeft {
+            display: flex;
+            align-items: center;
+
+            .icon {
+                width: 3.6rem;
+                height: 3.6rem;
+                padding: .7rem;
+                margin-right: $space-5;
+                background-color: $color-warning-50;
+                border-radius: $radius-lg;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .texts {
+                display: flex;
+                flex-direction: column;
+
+                .title {
+                    font-weight: 800;
+                    font-size: $font-size-lg;
+                    color: $color-gray-900;
+                }
+
+                .desc {
+                    font-size: $font-size-md;
+                    color: $color-gray-400;
+                }
+            }
+        }
+
+        .countBtn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: $color-primary-600;
+            color: $color-white;
+            border: none;
+            border-radius: $radius-full;
+            padding: $space-3 $space-6;
+            font-weight: 700;
+            cursor: default;
+        }
+    }
+
+    .controls {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: $space-3;
+
+        .searchBox {
+            position: relative;
+            display: flex;
+            align-items: center;
+            flex: 1;
+            max-width: none;
+
+            .searchIcon {
+                position: absolute;
+                left: 0.8rem;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 1.6rem;
+                height: 1.6rem;
+                pointer-events: none;
+            }
+
+            input {
+                @include input-base;
+                width: 100%;
+                padding: 0.8rem 1.2rem;
+                padding-left: 2.8rem;
+                border: 1px solid $color-gray-300;
+                border-radius: $radius-md;
+            }
+        }
+
+        .sortBox {
+            position: relative;
+
+            .sortSelect {
+                @include input-base;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 14rem;
+                min-width: 12rem;
+                max-width: 16rem;
+                cursor: pointer;
+
+                .sortLabel {
+                    display: flex;
+                    align-items: center;
+                    gap: $space-4;
+
+                    img {
+                        width: 1.6rem;
+                        height: 1.6rem;
+                    }
+                }
+
+                >img {
+                    width: 1.6rem;
+                    height: 1.6rem;
+                }
+            }
+
+            .dropdown {
+                position: absolute;
+                top: calc(100% + 4px);
+                left: 0;
+                width: 100%;
+                background: $color-white;
+                border: 1px solid $color-gray-200;
+                border-radius: $radius-md;
+                box-shadow: $shadow-md;
+                overflow: hidden;
+                z-index: 20;
+
+                li {
+                    display: flex;
+                    align-items: center;
+                    gap: $space-4;
+                    padding: $space-4;
+                    cursor: pointer;
+
+                    img {
+                        width: 1.6rem;
+                        height: 1.6rem;
+                    }
+
+                    &:hover {
+                        background: $color-primary-100;
+                        color: $color-primary-700;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,33 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.tabs {
+    display: flex;
+    flex-direction: column;
+    gap: $space-6;
+
+    .tabHeader {
+        display: flex;
+        gap: $space-4;
+
+        .tabBtn {
+            @include btn-base;
+            padding: 0 $space-8;
+            height: $h-tab;
+            background: $color-white;
+            color: $color-gray-700;
+            font-size: $font-size-base;
+            font-weight: 600;
+            text-align: center;
+            border: 1px solid $color-gray-200;
+            border-radius: $radius-full;
+            transition: background 0.2s ease, color 0.2s ease;
+
+            &.active {
+                background: $color-primary-600;
+                color: $color-white;
+                border-color: $color-primary-600;
+            }
+        }
+    }
+}

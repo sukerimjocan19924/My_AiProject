@@ -1,0 +1,71 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.stats {
+  @include card-base;
+  padding: $space-6;
+  border-radius: 0;
+  border-top: 1px solid $color-gray-200;
+
+  h3 {
+    margin-bottom: $space-6;
+    font-size: $font-size-base;
+    font-weight: 700;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: $space-3;
+
+    .card {
+      padding: $space-5;
+      text-align: center;
+      border-radius: $radius-md;
+
+      span {
+        display: block;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: $space-2;
+      }
+
+      p {
+        font-size: $font-size-sm;
+        color: $color-gray-500;
+      }
+
+      &:nth-child(1) {
+        background: #f5f3ff;
+
+        span {
+          color: $color-primary-600;
+        }
+      }
+
+      &:nth-child(2) {
+        background: #fff7ed;
+
+        span {
+          color: $color-anime-600;
+        }
+      }
+
+      &:nth-child(3) {
+        background: #f0fdf4;
+
+        span {
+          color: $color-success-600;
+        }
+      }
+
+      &:nth-child(4) {
+        background: #eff6ff;
+
+        span {
+          color: $color-info-600;
+        }
+      }
+    }
+  }
+}

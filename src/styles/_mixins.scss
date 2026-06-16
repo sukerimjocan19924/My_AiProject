@@ -1,0 +1,68 @@
+@use './variables' as *;
+
+// Flex
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+// Button Base
+@mixin btn-base {
+  @include flex-center;
+
+  gap: $space-4;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+// Input Base
+@mixin input-base {
+  width: 100%;
+  height: $h-input;
+  padding: 0 $space-6;
+
+  border-radius: $radius-md;
+  border: 1px solid $color-gray-300;
+
+  background: $color-white;
+  color: $color-gray-900;
+
+  &::placeholder {
+    color: $color-gray-400;
+  }
+
+  &:focus {
+    border-color: $color-primary-600;
+    box-shadow: 0 0 0 3px $color-primary-100;
+  }
+}
+
+
+// Component Mixins
+// Card Base
+@mixin card-base {
+  background: $color-white;
+  border-radius: $radius-xl;
+  border: 1px solid $color-gray-200;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+// Category Tag
+@mixin category-tag($bg, $color) {
+  background: $bg;
+  color: $color;
+
+  padding: $space-1 $space-5;
+  border-radius: $radius-lg;
+  font-size: $font-size-xs;
+  font-weight: 600;
+}

@@ -1,0 +1,138 @@
+@import url('https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css');
+
+$base-unit: 1rem; // 10px 기준
+$font-sans: 'SUIT Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+
+// Primary (Purple)
+$color-primary-950: #1E1B4B;
+$color-primary-900: #312E81;
+$color-primary-800: #4338CA;
+$color-primary-700: #5B28D5;
+$color-primary-600: #7C3AED;
+$color-primary-400: #A78BFA;
+$color-primary-300: #A5B4FC;
+$color-primary-200: #C7D2FE;
+$color-primary-100: #EDE9FE;
+$color-primary-50: #F5F3FF;
+
+// Success (Green)
+$color-success-600: #16A34A;
+$color-success-200: #A7F3D0;
+$color-success-100: #BBF7D0;
+$color-success-50: #DCFCE7;
+$color-success-bg: #F0FDF4;
+
+// Danger (Red)
+$color-danger-600: #DC2626;
+$color-danger-50: #FEF2F2;
+
+// Warning (Yellow)
+$color-warning-700: #D97706;
+$color-warning-500: #EAB308;
+$color-warning-200: #FDE68A;
+$color-warning-50: #FEF3C7;
+
+// Info (Blue)
+$color-info-600: #2563EB;
+$color-info-100: #BFDBFE;
+$color-info-50: #DBEAFE;
+$color-info-bg: #EFF6FF;
+
+// Anime (Orange)
+$color-anime-600: #EA580C;
+$color-anime-poster: #FFE9CE;
+$color-anime-bg: #FFF7ED;
+
+
+/* ========================================
+   Neutral (Gray)
+======================================== */
+
+$color-gray-900: #111827;
+$color-gray-700: #374151;
+$color-gray-500: #6B7280;
+$color-gray-400: #9CA3AF;
+$color-gray-300: #D1D5DB;
+$color-gray-200: #E5E7EB;
+$color-gray-100: #F3F4F6;
+$color-gray-50: #F9FAFB;
+
+$color-white: #FFFFFF;
+
+
+/* ========================================
+   Font Size
+======================================== */
+
+$font-size-xs: 1rem; // 10px
+$font-size-2xs: 1.1rem; // 11px
+$font-size-sm: 1.2rem; // 12px
+$font-size-md: 1.3rem; // 13px
+$font-size-base: 1.4rem; // 14px
+$font-size-lg: 1.6rem; // 16px
+$font-size-xl: 1.8rem; // 18px
+$font-size-2xl: 2rem; // 20px
+$font-size-3xl: 2.2rem; // 22px
+
+
+/* ========================================
+   Spacing
+======================================== */
+
+$space-1: 0.2rem; // 2px
+$space-2: 0.4rem; // 4px
+$space-3: 0.6rem; // 6px
+$space-4: 0.8rem; // 8px
+$space-5: 1rem; // 10px
+$space-6: 1.2rem; // 12px
+$space-7: 1.4rem; // 14px
+$space-8: 1.6rem; // 16px
+$space-10: 2rem; // 20px
+$space-12: 2.4rem; // 24px
+$space-16: 3.2rem; // 32px
+$space-24: 4.8rem; // 48px
+
+
+/* ========================================
+   Border Radius
+======================================== */
+
+$radius-sm: 0.6rem; // 6px
+$radius-md: 0.8rem; // 8px
+$radius-lg: 1rem; // 10px
+$radius-xl: 1.2rem; // 12px
+$radius-full: 2rem; // 20px
+
+
+/* ========================================
+   Component Height
+======================================== */
+
+$h-btn-sm: 3rem; // 30px
+$h-tab: 3.4rem; // 34px
+$h-nav-btn: 3.8rem; // 38px
+$h-input: 4rem; // 40px
+$h-search: 4.2rem; // 42px
+$h-btn-lg: 4.4rem; // 44px
+
+
+/* ========================================
+   Shadow
+======================================== */
+
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+
+/* ========================================
+   Z-index
+======================================== */
+
+$z-dropdown: 1000;
+$z-sticky: 1020;
+$z-fixed: 1030;
+$z-modal-backdrop: 1040;
+$z-modal: 1050;
+$z-tooltip: 1060;
