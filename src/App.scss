@@ -4,27 +4,27 @@
 .app {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   background: $color-gray-50;
 }
 
 .layout {
-  display: grid;
-  grid-template-columns: 32rem 1fr; // 좌측 사이드바 + 우측 메인
-  gap: $space-8;
   flex: 1;
-  padding: $space-8;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  overflow: hidden;
 }
 
 .sidebar {
   display: flex;
   flex-direction: column;
-  gap: $space-8;
+  height: 100%;
+  overflow: hidden;
+  min-width: 28rem
 }
 
 .content {
-  @include card-base;
-  padding: $space-12;
-  background: $color-white;
-  border-radius: $radius-md;
+  padding: $space-8;
+  overflow: hidden;
 }
