@@ -2,8 +2,18 @@ import React from 'react'
 import ArchiveCard from './ArchiveCard'
 import styles from './ArchiveList.module.scss'
 
-const ArchiveList = ({ archives, setArchives, searchTerm }) => {
+const ArchiveList = ({ archives, setArchives, searchTerm, type }) => {
   if (archives.length === 0) {
+    if (type === 'favorites') {
+      return (
+        <div className={`${styles.empty} ${styles.favoritesEmpty}`} >
+          <img src="/icons/icon-empty-star.svg" alt="empty" />
+          <p className={styles.emptyTitle}>즐겨찾기한 작품이 없습니다</p>
+          <p className={styles.emptyText}>작품 카드의 ⭐ 버튼을 눌러 즐겨찾기에 추가해보세요!</p>
+        </div>
+      )
+    }
+
     if (searchTerm && searchTerm.trim() !== '') {
       return (
         <div className={styles.empty}>
@@ -23,7 +33,7 @@ const ArchiveList = ({ archives, setArchives, searchTerm }) => {
   }
 
   return (
-    <div className={styles.list}>
+    <div className={`${styles.list} ${type === 'favorites' ? styles.favoritesList : ''}`}>
       {archives.map(item => (
         <ArchiveCard
           key={item.id}

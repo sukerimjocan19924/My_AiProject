@@ -5,7 +5,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.6rem;
-  max-height:75vh;
+  max-height: 75vh;
   overflow-y: auto;
   padding-right: 0.8rem;
 }
@@ -32,4 +32,16 @@
     color: $color-gray-400;
     font-size: $font-size-sm;
   }
+}
+
+.favoritesEmpty {
+  height: 55vh;
+
+  img {
+    background-color: $color-warning-50;
+  }
+}
+
+.favoritesList {
+  max-height: 67vh;
 }

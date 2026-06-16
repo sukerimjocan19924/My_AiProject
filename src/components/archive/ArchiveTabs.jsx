@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import ArchiveList from './ArchiveList'
 import styles from './ArchiveTabs.module.scss'
 
-const ArchiveTabs = ({ archives, setArchives, searchTerm }) => {
+const ArchiveTabs = ({ archives, setArchives, searchTerm, type }) => {
   const categories = ['전체', '애니메이션', '드라마', '영화']
   const [activeTab, setActiveTab] = useState('전체')
 
@@ -35,6 +35,7 @@ const ArchiveTabs = ({ archives, setArchives, searchTerm }) => {
         archives={filteredArchives}
         setArchives={setArchives}
         searchTerm={searchTerm}
+        type={type}
       />
 
     </section>
