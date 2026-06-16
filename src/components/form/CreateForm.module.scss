@@ -118,6 +118,31 @@
   }
 }
 
+.titleWrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $space-4;
+
+  .titleExtra {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    background-color: $color-primary-50;
+    padding: $space-1 $space-3;
+    border-radius: $radius-full;
+
+    img {
+      width: 1.2rem;
+      height: 1.2rem;
+    }
+
+    span {
+      font-size: $font-size-xs;
+      color: $color-primary-600;
+    }
+  }
+}
 
 .searchBox {
   position: relative;
@@ -170,14 +195,78 @@
     gap: $space-2;
 
     img {
-      width: 2.4rem;
-      height: 2.4rem;
+      width: 3.6rem;
+      height: 3.6rem;
       opacity: .5;
     }
 
     span {
       font-size: $font-size-sm;
       color: $color-gray-400;
+    }
+  }
+}
+
+
+.favorite {
+  display: flex;
+  align-items: flex-end;
+
+  .favoriteRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 12rem;
+    padding: $space-2 $space-6;
+    border-radius: $radius-full;
+    background-color: $color-warning-50;
+
+    .favoriteTitle {
+      display: flex;
+      align-items: center;
+      gap: $space-2;
+
+      .favoriteIcon {
+        width: 1.6rem;
+        height: 1.6rem;
+        fill: $color-warning-700;
+      }
+
+      .favoriteText {
+        font-size: $font-size-base;
+        color: $color-warning-700;
+        flex: 1;
+      }
+    }
+
+    .favoriteCheckbox {
+      appearance: none;
+      width: 1.4rem;
+      height: 1.4rem;
+      padding: 0 !important;
+      border: 2px solid $color-warning-500;
+      border-radius: 0.4rem;
+      cursor: pointer;
+
+      &:focus {
+        border: 2px solid $color-warning-500;
+        outline: none;
+        box-shadow: none !important;
+      }
+
+      &:checked {
+        border-color: $color-warning-500;
+        position: relative;
+      }
+
+      &:checked::after {
+        content: "✔";
+        color: $color-warning-500;
+        font-size: 1rem;
+        position: absolute;
+        top: -0.16rem;
+        left: 0.15rem;
+      }
     }
   }
 }

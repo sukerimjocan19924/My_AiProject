@@ -1,0 +1,35 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+  max-height:75vh;
+  overflow-y: auto;
+  padding-right: 0.8rem;
+}
+
+.empty {
+  @include flex-center;
+  flex-direction: column;
+  gap: $space-3;
+  background-color: $color-white;
+  height: 75vh;
+  
+  img {
+    padding: $space-6;
+    background-color: $color-gray-100;
+  }
+  
+  .emptyTitle {
+    color: $color-gray-900;
+    font-size: $font-size-md;
+    font-weight: 700;
+  }
+  
+  .emptyText {
+    color: $color-gray-400;
+    font-size: $font-size-sm;
+  }
+}

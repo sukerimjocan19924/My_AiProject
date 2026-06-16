@@ -1,18 +1,7 @@
 import React, { useState } from 'react'
 import styles from './Header.module.scss'
 
-const Header = () => {
-  const [category, setCategory] = useState("전체 카테고리")
-  const [open, setOpen] = useState(false)
-
-  const categoryIcons = {
-    "전체 카테고리": "/icons/icon-bookMark.svg",
-    "애니메이션": "/icons/icon-animation.svg",
-    "드라마": "/icons/icon-drama.svg",
-    "영화": "/icons/icon-movie.svg",
-  }
-
-  const categories = Object.keys(categoryIcons)
+const Header = ({ page, setPage }) => {
 
   return (
     <header className={styles.header}>
@@ -24,37 +13,28 @@ const Header = () => {
       </div>
 
       <div className={styles.actions}>
-        <div className={styles.categoryBox}>
+        {page === 'favorite' && (
           <button
-            className={styles.categorySelect}
-            onClick={() => setOpen(!open)} >
-            <span className={styles.categoryLabel}>
-              <img src={categoryIcons[category]} alt={category} />
-              {category}
-            </span>
-            <img src="/icons/icon-arrow-down.svg" alt="dropdown" />
+            className={styles.archiveBtn}
+            onClick={() => setPage('archive')}
+          >
+            <img src="/icons/icon-arrow-left.svg" />
+            목록으로
           </button>
+        )}
 
-          {open && (
-            <ul className={styles.dropdown}>
-              {categories.map((cat) => (
-                <li
-                  key={cat}
-                  onClick={() => {
-                    setCategory(cat)
-                    setOpen(false)
-                  }}
-                >
-                  <img src={categoryIcons[cat]} alt={cat} />
-                  {cat}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-
-        <button className={styles.favoriteBtn}>
-          <img src="/icons/icon-star.svg" alt="favorite" />
+        <button
+          className={styles.favoriteBtn}
+          onClick={() => setPage('favorite')}
+        >
+          <img
+            src={
+              page === 'favorite'
+                ? "/icons/icon-star-filled.svg"
+                : "/icons/icon-star.svg"
+            }
+            alt="favorite"
+          />
           즐겨찾기
         </button>
       </div>

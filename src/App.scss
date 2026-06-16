@@ -7,24 +7,24 @@
   height: 100vh;
   overflow: hidden;
   background: $color-gray-50;
-}
 
-.layout {
-  flex: 1;
-  display: grid;
-  grid-template-columns: 1fr 3fr;
-  overflow: hidden;
-}
+  .layout {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    overflow: hidden;
 
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-  min-width: 28rem
-}
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow-y: auto;
+      min-width: 28rem
+    }
 
-.content {
-  padding: $space-8;
-  overflow: hidden;
+    .content {
+      padding: $space-8;
+      overflow: hidden;
+    }
+  }
 }

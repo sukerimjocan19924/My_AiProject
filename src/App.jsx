@@ -1,45 +1,43 @@
 import React, { useEffect, useState } from 'react'
 import './App.scss'
 import Header from './components/header/Header'
-import Form from './components/form/Form'
+import ArchivePage from './pages/ArchivePage'
+import FavoritePage from './pages/FavoritePage'
+import CreateForm from './components/form/CreateForm'
 import Stats from './components/stats/Stats'
-import ArchiveTabs from './components/archive/ArchiveTabs'
-
 import { mockData } from './utils/mockData'
 
 function App() {
   const [archives, setArchives] = useState([])
+  const [page, setPage] = useState('archive')
 
   useEffect(() => {
     const savedData = localStorage.getItem('archives')
-
     if (savedData) {
       setArchives(JSON.parse(savedData))
     } else {
-      localStorage.setItem(
-        'archives',
-        JSON.stringify(mockData)
-      )
+      localStorage.setItem('archives', JSON.stringify(mockData))
       setArchives(mockData)
     }
   }, [])
 
   return (
     <div className="app">
-      <Header />
+      <Header page={page} setPage={setPage} />
 
       <main className="layout">
         <aside className="sidebar">
-          <Form
-            archives={archives}
-            setArchives={setArchives}
-          />
-
+          <CreateForm archives={archives} setArchives={setArchives} />
           <Stats archives={archives} />
         </aside>
 
         <section className="content">
-          <ArchiveTabs archives={archives} />
+          {page === 'archive' && (
+            <ArchivePage archives={archives} setArchives={setArchives} />
+          )}
+          {page === 'favorite' && (
+            <FavoritePage archives={archives} setArchives={setArchives} />
+          )}
         </section>
       </main>
     </div>
