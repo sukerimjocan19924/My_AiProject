@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import ArchiveTabs from '../components/archive/ArchiveTabs'
 import styles from './FavoritePage.module.scss'
 
-const FavoritePage = ({ archives, setArchives }) => {
+const FavoritePage = ({ archives, setArchives , setEditingItem }) => {
   const favorites = archives.filter(item => item.favorite)
   const [searchTerm, setSearchTerm] = useState('')
   const [sortOption, setSortOption] = useState('latest')

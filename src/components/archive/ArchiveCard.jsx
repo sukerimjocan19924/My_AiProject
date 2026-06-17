@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react'
 import styles from './ArchiveCard.module.scss'
 
-const ArchiveCard = ({ item, archives, setArchives, setEditingItem }) => {
+const ArchiveCard = ({ item, archives, setArchives, setEditingItem, editingItem }) => {
   const [expanded, setExpanded] = useState(false)
   const [showArrow, setShowArrow] = useState(false)
   const descRef = useRef(null)
+  const [db, setDb] = useState(null)
 
   const handleDelete = () => {
     const confirmDelete = window.confirm(
@@ -29,7 +30,12 @@ const ArchiveCard = ({ item, archives, setArchives, setEditingItem }) => {
   }
 
   const handleEdit = () => {
-    setEditingItem(item)
+    if (editingItem?.id === item.id) {
+      setEditingItem(null)
+    } else {
+      // 선택되지 않은 카드라면 EditForm으로 전환
+      setEditingItem(item)
+    }
   }
 
   useEffect(() => {
@@ -62,9 +68,39 @@ const ArchiveCard = ({ item, archives, setArchives, setEditingItem }) => {
       )
   }, [item.description])
 
+  function loadPoster(id, callback) {
+    if (!db) return
+    const tx = db.transaction("posters", "readonly")
+    const store = tx.objectStore("posters")
+    const req = store.get(id)
+    req.onsuccess = () => {
+      if (req.result) callback(req.result.poster)
+    }
+  }
+
+  useEffect(() => {
+    if (!db) return
+    loadPoster(item.id, (poster) => {
+      setArchives(prev =>
+        prev.map(a => a.id === item.id ? { ...a, poster } : a)
+      )
+    })
+  }, [db, item.id, setArchives])
+
+  useEffect(() => {
+    const request = indexedDB.open("ArchiveDB", 1)
+    request.onupgradeneeded = (e) => {
+      const db = e.target.result
+      if (!db.objectStoreNames.contains("posters")) {
+        db.createObjectStore("posters", { keyPath: "id" })
+      }
+    }
+    request.onsuccess = (e) => setDb(e.target.result)
+  }, [])
+
   return (
-    <div className={styles.card}>
-      <div className={styles.poster}>
+    <div className={`${styles.card} ${editingItem?.id === item.id ? styles.selected : ''}`}>
+      <div className={`${styles.poster} ${styles[item.category]}`}>
         {item.poster ? (
           <img src={item.poster} alt={item.title} />
         ) : (
@@ -98,7 +134,7 @@ const ArchiveCard = ({ item, archives, setArchives, setEditingItem }) => {
                 alt="즐겨찾기"
               />
             </button>
-            <button className={styles.btn} onClick={handleEdit}>
+            <button className={styles.btn} onClick={() => handleEdit()}>
               <img src="/icons/icon-pencil.svg" alt="수정" />
             </button>
             <button className={styles.btn} onClick={handleDelete}>

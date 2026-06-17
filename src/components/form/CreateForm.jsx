@@ -1,10 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import styles from './CreateForm.module.scss'
 
-const CreateForm = ({ archives, setArchives }) => {
+const CreateForm = ({ archives, setArchives, editingItem, setEditingItem }) => {
   const [title, setTitle] = useState('')
   const [category, setCategory] = useState('애니메이션')
   const [poster, setPoster] = useState('')
+  const [db, setDb] = useState(null)
+  const fileInputRef = useRef(null)
   const [description, setDescription] = useState('')
   const [characters, setCharacters] = useState('')
   const [episodeCount, setEpisodeCount] = useState('')
@@ -63,9 +65,33 @@ const CreateForm = ({ archives, setArchives }) => {
     setFavorite(false)
   }
 
+  useEffect(() => {
+    const request = indexedDB.open("ArchiveDB", 1)
+    request.onupgradeneeded = (e) => {
+      const db = e.target.result
+      if (!db.objectStoreNames.contains("posters")) {
+        db.createObjectStore("posters", { keyPath: "id" })
+      }
+    }
+    request.onsuccess = (e) => setDb(e.target.result)
+  }, [])
+
+  const handlePosterUpload = (file, id) => {
+    if (!db) return
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setPoster(reader.result) // 미리보기
+      const tx = db.transaction("posters", "readwrite")
+      tx.objectStore("posters").put({ id, poster: reader.result })
+    }
+    reader.readAsDataURL(file)
+  }
+
   const handleSubmit = () => {
+    const newId = Date.now()
+
     const newArchive = {
-      id: Date.now(),
+      id: newId,
       title,
       category,
       poster,
@@ -79,6 +105,15 @@ const CreateForm = ({ archives, setArchives }) => {
     const updatedArchives = [newArchive, ...archives]
     setArchives(updatedArchives)
     localStorage.setItem('archives', JSON.stringify(updatedArchives))
+
+    if (poster && db) {
+      const tx = db.transaction("posters", "readwrite")
+      tx.objectStore("posters").put({ id: newId, poster })
+    }
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
 
     setTitle('')
     setPoster('')
@@ -169,10 +204,13 @@ const CreateForm = ({ archives, setArchives }) => {
         <input
           type="file"
           accept="image/*"
+          ref={fileInputRef}
           onChange={(e) => {
-            const file = e.target.files[0]
-            if (!file) return
-            setPoster(URL.createObjectURL(file))
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onloadend = () => setPoster(reader.result); // 미리보기만
+            reader.readAsDataURL(file);
           }}
         />
       </div>

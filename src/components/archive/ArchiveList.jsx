@@ -2,7 +2,15 @@ import React from 'react'
 import ArchiveCard from './ArchiveCard'
 import styles from './ArchiveList.module.scss'
 
-const ArchiveList = ({ archives, setArchives, searchTerm, type }) => {
+const ArchiveList = ({ archives, setArchives, searchTerm, type, setEditingItem, editingItem }) => {
+  let displayArchives = [...archives]
+  if (editingItem) {
+    displayArchives = [
+      editingItem,
+      ...displayArchives.filter(item => item.id !== editingItem.id)
+    ]
+  }
+
   if (archives.length === 0) {
     if (type === 'favorites') {
       return (
@@ -34,12 +42,14 @@ const ArchiveList = ({ archives, setArchives, searchTerm, type }) => {
 
   return (
     <div className={`${styles.list} ${type === 'favorites' ? styles.favoritesList : ''}`}>
-      {archives.map(item => (
+      {displayArchives.map(item => (
         <ArchiveCard
           key={item.id}
           item={item}
           archives={archives}
           setArchives={setArchives}
+          setEditingItem={setEditingItem}
+          editingItem={editingItem}
         />
       ))}
     </div>
