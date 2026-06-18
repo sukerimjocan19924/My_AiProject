@@ -2,7 +2,7 @@ import React from 'react'
 import ArchiveCard from './ArchiveCard'
 import styles from './ArchiveList.module.scss'
 
-const ArchiveList = ({ archives, setArchives, searchTerm, type }) => {
+const ArchiveList = ({ archives, setArchives, searchTerm, type, setEditingItem, editingItem }) => {
   if (archives.length === 0) {
     if (type === 'favorites') {
       return (
@@ -40,6 +40,8 @@ const ArchiveList = ({ archives, setArchives, searchTerm, type }) => {
           item={item}
           archives={archives}
           setArchives={setArchives}
+          setEditingItem={setEditingItem}
+          editingItem={editingItem}
         />
       ))}
     </div>

@@ -1,29 +1,29 @@
 import React, { useState, useEffect, useRef } from 'react'
-import styles from './CreateForm.module.scss'
+import styles from './EditForm.module.scss'
 
-const CreateForm = ({ archives, setArchives, editingItem, setEditingItem }) => {
-  const [title, setTitle] = useState('')
-  const [category, setCategory] = useState('애니메이션')
-  const [poster, setPoster] = useState('')
+const EditForm = ({ editingItem, archives, setArchives, setEditingItem }) => {
+  const [title, setTitle] = useState(editingItem?.title || '')
+  const [category, setCategory] = useState(editingItem?.category || '애니메이션')
+  const [poster, setPoster] = useState(editingItem?.poster || '')
   const [db, setDb] = useState(null)
   const fileInputRef = useRef(null)
-  const [description, setDescription] = useState('')
-  const [characters, setCharacters] = useState('')
-  const [episodeCount, setEpisodeCount] = useState('')
-  const [favorite, setFavorite] = useState(false)
+  const [description, setDescription] = useState(editingItem?.description || '')
+  const [characters, setCharacters] = useState(editingItem?.characters || '')
+  const [episodeCount, setEpisodeCount] = useState(editingItem?.episodeCount || '')
+  const [favorite, setFavorite] = useState(editingItem?.favorite || false)
 
-  const [suggestions, setSuggestions] = useState([])
-  const [showSuggestions, setShowSuggestions] = useState(false)
+  // 드롭다운 상태
   const [open, setOpen] = useState(false)
+  const categories = ["애니메이션", "드라마", "영화"]
 
+  // 카테고리 아이콘
   const categoryIcons = {
     애니메이션: '/icons/icon-animation.svg',
     드라마: '/icons/icon-drama.svg',
     영화: '/icons/icon-movie.svg',
   }
 
-  const categories = Object.keys(categoryIcons)
-
+  // 단위 매핑
   const unitMap = {
     '애니메이션': '화',
     '드라마': '회',
@@ -35,36 +35,7 @@ const CreateForm = ({ archives, setArchives, editingItem, setEditingItem }) => {
     return count ? `총 ${count}${unit}` : ''
   }
 
-  const handleTitleChange = async (e) => {
-    const value = e.target.value
-    setTitle(value)
-
-    if (value.trim().length < 2) {
-      setSuggestions([])
-      setShowSuggestions(false)
-      return
-    }
-
-    try {
-      const res = await fetch(`/api/search?title=${value}`)
-      const data = await res.json()
-      setSuggestions(data)
-      setShowSuggestions(true)
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const handleSelectTitle = (item) => {
-    setTitle(item.title)
-    setPoster(item.poster || '')
-    setDescription(item.description || '')
-    setCharacters(item.characters || '')
-    setEpisodeCount(item.episodeCount || '')
-    setShowSuggestions(false)
-    setFavorite(false)
-  }
-
+  // IndexedDB 초기화
   useEffect(() => {
     const request = indexedDB.open("ArchiveDB", 1)
     request.onupgradeneeded = (e) => {
@@ -76,27 +47,10 @@ const CreateForm = ({ archives, setArchives, editingItem, setEditingItem }) => {
     request.onsuccess = (e) => setDb(e.target.result)
   }, [])
 
-  const handlePosterUpload = (file, id) => {
-    if (!db) return
-    const reader = new FileReader()
-    reader.onloadend = () => {
-      setPoster(reader.result) // 미리보기
-      const tx = db.transaction("posters", "readwrite")
-      tx.objectStore("posters").put({ id, poster: reader.result })
-    }
-    reader.readAsDataURL(file)
-  }
-
+  // 저장 처리
   const handleSubmit = () => {
-    if (!title.trim()) {
-      window.alert("작품 제목을 입력해주세요.")
-      return
-    }
-
-    const newId = Date.now()
-
-    const newArchive = {
-      id: newId,
+    const updatedArchive = {
+      ...editingItem,
       title,
       category,
       poster,
@@ -107,36 +61,48 @@ const CreateForm = ({ archives, setArchives, editingItem, setEditingItem }) => {
       favorite,
     }
 
-    const updatedArchives = [newArchive, ...archives]
+    const updatedArchives = archives.map(a =>
+      a.id === editingItem.id ? updatedArchive : a
+    )
     setArchives(updatedArchives)
     localStorage.setItem('archives', JSON.stringify(updatedArchives))
 
     if (poster && db) {
       const tx = db.transaction("posters", "readwrite")
-      tx.objectStore("posters").put({ id: newId, poster })
+      tx.objectStore("posters").put({ id: editingItem.id, poster })
     }
 
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
 
-    setTitle('')
-    setPoster('')
-    setDescription('')
-    setCharacters('')
-    setEpisodeCount('')
-    setFavorite(false)
+    setEditingItem(null) // 수정 완료 후 닫기
   }
 
   return (
     <section className={styles.form}>
-      <div className={styles.title}>
+      <div className={styles.titleWrap}>
         <h2>
-          <img src="/icons/icon-plus_circle.svg" alt="icon" />
-          새 작품 등록
+          <img src="/icons/icon-pencil.svg" alt="icon" />
+          작품 수정
         </h2>
-        <p>제목 입력 시 작품 정보를 자동으로 불러올 수 있습니다</p>
+
+        {favorite && (
+          <div className={styles.titleExtra}>
+            <img src="/icons/icon-star2-filled.svg" alt="즐겨찾기됨" />
+            <span>즐겨찾기됨</span>
+          </div>
+        )}
       </div>
+
+      {title && (
+        <div className={styles.editingInfo}>
+          <span className={styles.tag}>
+            {category}
+          </span>
+          <p>"{title}" 작품 수정 중</p>
+        </div>
+      )}
 
       <div className={styles.field}>
         <label>카테고리</label>
@@ -156,7 +122,13 @@ const CreateForm = ({ archives, setArchives, editingItem, setEditingItem }) => {
           {open && (
             <ul className={styles.dropdown}>
               {categories.map((cat) => (
-                <li key={cat} onClick={() => { setCategory(cat); setOpen(false) }}>
+                <li
+                  key={cat}
+                  onClick={() => {
+                    setCategory(cat)
+                    setOpen(false)
+                  }}
+                >
                   <img src={categoryIcons[cat]} alt={cat} />
                   {cat}
                 </li>
@@ -166,6 +138,7 @@ const CreateForm = ({ archives, setArchives, editingItem, setEditingItem }) => {
         </div>
       </div>
 
+      {/* 제목 입력 + API 자동 연동 */}
       <div className={styles.field}>
         <div className={styles.titleWrap}>
           <label>제목</label>
@@ -174,26 +147,15 @@ const CreateForm = ({ archives, setArchives, editingItem, setEditingItem }) => {
             <span>API 자동 연동</span>
           </div>
         </div>
-
-        <div className={styles.searchBox}>
-          <input
-            type="text"
-            value={title}
-            onChange={handleTitleChange}
-            placeholder="작품 제목을 입력하세요"
-          />
-          {showSuggestions && suggestions.length > 0 && (
-            <ul className={styles.suggestions}>
-              {suggestions.map((item) => (
-                <li key={item.id} onClick={() => handleSelectTitle(item)}>
-                  {item.title}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="작품 제목을 입력하세요"
+        />
       </div>
 
+      {/* 포스터 이미지 */}
       <div className={styles.field}>
         <label>포스터 이미지</label>
         <div className={styles.poster}>
@@ -211,15 +173,16 @@ const CreateForm = ({ archives, setArchives, editingItem, setEditingItem }) => {
           accept="image/*"
           ref={fileInputRef}
           onChange={(e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onloadend = () => setPoster(reader.result); // 미리보기만
-            reader.readAsDataURL(file);
+            const file = e.target.files[0]
+            if (!file) return
+            const reader = new FileReader()
+            reader.onloadend = () => setPoster(reader.result)
+            reader.readAsDataURL(file)
           }}
         />
       </div>
 
+      {/* 줄거리 */}
       <div className={styles.field}>
         <label>줄거리</label>
         <textarea
@@ -229,6 +192,7 @@ const CreateForm = ({ archives, setArchives, editingItem, setEditingItem }) => {
         />
       </div>
 
+      {/* 등장인물 */}
       <div className={styles.field}>
         <label>등장인물</label>
         <input
@@ -237,7 +201,7 @@ const CreateForm = ({ archives, setArchives, editingItem, setEditingItem }) => {
           onChange={(e) => setCharacters(e.target.value)}
           placeholder={
             category === '애니메이션'
-              ? '예: 쿠로센세이, 나기사, 카르마'
+              ? '예: 탄지로, 이노스케, 젠이츠'
               : category === '드라마'
               ? '예: 윤세리, 리정혁, 구승준'
               : '예: 마석도, 장첸, 김옥분'
@@ -245,6 +209,7 @@ const CreateForm = ({ archives, setArchives, editingItem, setEditingItem }) => {
         />
       </div>
 
+      {/* 회차 정보 */}
       <div className={styles.field}>
         <label>회차 정보</label>
         <input
@@ -252,39 +217,53 @@ const CreateForm = ({ archives, setArchives, editingItem, setEditingItem }) => {
           min="1"
           value={episodeCount}
           onChange={(e) => setEpisodeCount(e.target.value)}
-          placeholder={`예: ${category === '영화' ? '109 (분)' : category === '드라마' ? '16 (회)' : '24 (화)'}`}
+          placeholder={
+            category === '영화'
+              ? '예: 109 (분)'
+              : category === '드라마'
+              ? '예: 16 (회)'
+              : '예: 24 (화)'
+          }
         />
       </div>
-      
+
+      {/* 즐겨찾기 토글 */}
       <div className={`${styles.field} ${styles.favorite}`}>
         <div className={styles.favoriteRow}>
           <div className={styles.favoriteTitle}>
             <img
-              src={favorite 
-                ? "/icons/icon-star2-filled.svg" 
-                : "/icons/icon-star2.svg"}
+              src={favorite ? "/icons/icon-star2-filled.svg" : "/icons/icon-star2.svg"}
               alt="즐겨찾기"
               className={styles.favoriteIcon}
             />
             <span className={styles.favoriteText}>즐겨찾기</span>
           </div>
-
           <input
             type="checkbox"
-            id="favoriteToggle"
             checked={favorite}
             onChange={(e) => setFavorite(e.target.checked)}
             className={styles.favoriteCheckbox}
           />
         </div>
       </div>
-      
-      <button className={styles.submitBtn} onClick={handleSubmit}>
-        <img src="/icons/icon-plus.svg" alt="icon" />
-        작품 등록하기
-      </button>
+
+      {/* 버튼 */}
+      <div className={styles.actions}>
+        <button className={styles.submitBtn} onClick={handleSubmit}>
+          <img src="/icons/icon-check.svg" alt="icon" />
+          수정 완료
+        </button>
+        <button
+          type="button"
+          className={styles.cancelBtn}
+          onClick={() => setEditingItem(null)}
+        >
+          <img src="/icons/icon-close.svg" alt="icon" />
+          취소 (등록 폼으로 돌아가기)
+        </button>
+      </div>
     </section>
   )
 }
 
-export default CreateForm
+export default EditForm

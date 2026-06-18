@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import ArchiveTabs from '../components/archive/ArchiveTabs'
 import styles from './ArchivePage.module.scss'
 
-const ArchivePage = ({ archives, setArchives }) => {
+const ArchivePage = ({ archives, setArchives, editingItem, setEditingItem }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [sortOption, setSortOption] = useState('latest')
   const [open, setOpen] = useState(false)
@@ -85,6 +85,8 @@ const ArchivePage = ({ archives, setArchives }) => {
         archives={filteredArchives}
         setArchives={setArchives}
         searchTerm={searchTerm}
+        setEditingItem={setEditingItem}
+        editingItem={editingItem}
       />
     </div>
   )
