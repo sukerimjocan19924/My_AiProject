@@ -88,6 +88,11 @@ const CreateForm = ({ archives, setArchives, editingItem, setEditingItem }) => {
   }
 
   const handleSubmit = () => {
+    if (!title.trim()) {
+      window.alert("작품 제목을 입력해주세요.")
+      return
+    }
+
     const newId = Date.now()
 
     const newArchive = {

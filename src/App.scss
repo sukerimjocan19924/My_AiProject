@@ -19,7 +19,32 @@
       flex-direction: column;
       height: 100%;
       overflow-y: auto;
-      min-width: 28rem
+      min-width: 28rem;
+      position: relative;
+
+      .edit-mode-banner {
+        position: sticky;
+        top: 0;
+        background-color: $color-success-bg;
+        border-bottom: 2px solid $color-success-100;
+        font-weight: 800;
+        color: $color-success-600;
+        padding: $space-4 $space-6;
+        display: flex;
+        align-items: center;
+        gap: $space-4;
+        z-index: 10;
+      }
+
+      .form-area {
+        flex: 1;
+        overflow-y: auto;
+      }
+
+      .form-area,
+      .stats-area {
+        border-right: 2px solid $color-success-600;
+      }
     }
 
     .content {

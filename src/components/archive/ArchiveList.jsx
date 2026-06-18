@@ -3,14 +3,6 @@ import ArchiveCard from './ArchiveCard'
 import styles from './ArchiveList.module.scss'
 
 const ArchiveList = ({ archives, setArchives, searchTerm, type, setEditingItem, editingItem }) => {
-  let displayArchives = [...archives]
-  if (editingItem) {
-    displayArchives = [
-      editingItem,
-      ...displayArchives.filter(item => item.id !== editingItem.id)
-    ]
-  }
-
   if (archives.length === 0) {
     if (type === 'favorites') {
       return (
@@ -42,7 +34,7 @@ const ArchiveList = ({ archives, setArchives, searchTerm, type, setEditingItem, 
 
   return (
     <div className={`${styles.list} ${type === 'favorites' ? styles.favoritesList : ''}`}>
-      {displayArchives.map(item => (
+      {archives.map(item => (
         <ArchiveCard
           key={item.id}
           item={item}

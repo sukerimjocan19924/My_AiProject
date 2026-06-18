@@ -28,22 +28,34 @@ function App() {
       <Header page={page} setPage={setPage} />
 
       <main className="layout">
-        <aside className="sidebar">
-          {editingItem ? (
-            <EditForm
-              archives={archives}
-              setArchives={setArchives}
-              editingItem={editingItem}
-              setEditingItem={setEditingItem}
-            />
-          ) : (
-            <CreateForm
-              archives={archives}
-              setArchives={setArchives}
-              setEditingItem={setEditingItem}
-            />
+        <aside className={`sidebar ${editingItem ? 'selected' : ''}`}>
+          {editingItem && (
+            <div className="edit-mode-banner">
+              <img src="/icons/icon-pencil.svg" alt="수정" />
+              <span>수정 모드 활성화 중</span>
+            </div>
           )}
-          <Stats archives={archives} />
+
+          <div className="form-area">
+            {editingItem ? (
+              <EditForm
+                archives={archives}
+                setArchives={setArchives}
+                editingItem={editingItem}
+                setEditingItem={setEditingItem}
+              />
+            ) : (
+              <CreateForm
+                archives={archives}
+                setArchives={setArchives}
+                setEditingItem={setEditingItem}
+              />
+            )}
+          </div>
+
+          <div className="stats-area">
+            <Stats archives={archives} />
+          </div>
         </aside>
 
         <section className="content">

@@ -1,9 +1,268 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import styles from './EditForm.module.scss'
 
-const EditForm = ({setEditingItem}) => {
+const EditForm = ({ editingItem, archives, setArchives, setEditingItem }) => {
+  const [title, setTitle] = useState(editingItem?.title || '')
+  const [category, setCategory] = useState(editingItem?.category || '애니메이션')
+  const [poster, setPoster] = useState(editingItem?.poster || '')
+  const [db, setDb] = useState(null)
+  const fileInputRef = useRef(null)
+  const [description, setDescription] = useState(editingItem?.description || '')
+  const [characters, setCharacters] = useState(editingItem?.characters || '')
+  const [episodeCount, setEpisodeCount] = useState(editingItem?.episodeCount || '')
+  const [favorite, setFavorite] = useState(editingItem?.favorite || false)
+
+  // 드롭다운 상태
+  const [open, setOpen] = useState(false)
+  const categories = ["애니메이션", "드라마", "영화"]
+
+  // 카테고리 아이콘
+  const categoryIcons = {
+    애니메이션: '/icons/icon-animation.svg',
+    드라마: '/icons/icon-drama.svg',
+    영화: '/icons/icon-movie.svg',
+  }
+
+  // 단위 매핑
+  const unitMap = {
+    '애니메이션': '화',
+    '드라마': '회',
+    '영화': '분',
+  }
+
+  const getEpisodeLabel = (category, count) => {
+    const unit = unitMap[category] || ''
+    return count ? `총 ${count}${unit}` : ''
+  }
+
+  // IndexedDB 초기화
+  useEffect(() => {
+    const request = indexedDB.open("ArchiveDB", 1)
+    request.onupgradeneeded = (e) => {
+      const db = e.target.result
+      if (!db.objectStoreNames.contains("posters")) {
+        db.createObjectStore("posters", { keyPath: "id" })
+      }
+    }
+    request.onsuccess = (e) => setDb(e.target.result)
+  }, [])
+
+  // 저장 처리
+  const handleSubmit = () => {
+    const updatedArchive = {
+      ...editingItem,
+      title,
+      category,
+      poster,
+      description,
+      characters,
+      episodeCount,
+      episodeInfo: getEpisodeLabel(category, episodeCount),
+      favorite,
+    }
+
+    const updatedArchives = archives.map(a =>
+      a.id === editingItem.id ? updatedArchive : a
+    )
+    setArchives(updatedArchives)
+    localStorage.setItem('archives', JSON.stringify(updatedArchives))
+
+    if (poster && db) {
+      const tx = db.transaction("posters", "readwrite")
+      tx.objectStore("posters").put({ id: editingItem.id, poster })
+    }
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+
+    setEditingItem(null) // 수정 완료 후 닫기
+  }
+
   return (
-    <div>EditForm</div>
+    <section className={styles.form}>
+      <div className={styles.titleWrap}>
+        <h2>
+          <img src="/icons/icon-pencil.svg" alt="icon" />
+          작품 수정
+        </h2>
+
+        {favorite && (
+          <div className={styles.titleExtra}>
+            <img src="/icons/icon-star2-filled.svg" alt="즐겨찾기됨" />
+            <span>즐겨찾기됨</span>
+          </div>
+        )}
+      </div>
+
+      {title && (
+        <div className={styles.editingInfo}>
+          <span className={styles.tag}>
+            {category}
+          </span>
+          <p>"{title}" 작품 수정 중</p>
+        </div>
+      )}
+
+      <div className={styles.field}>
+        <label>카테고리</label>
+        <div className={styles.categoryBox}>
+          <button
+            type="button"
+            className={styles.categorySelect}
+            onClick={() => setOpen(!open)}
+          >
+            <span className={styles.categoryLabel}>
+              <img src={categoryIcons[category]} alt={category} />
+              {category}
+            </span>
+            <img src="/icons/icon-arrow-down.svg" alt="icon" />
+          </button>
+
+          {open && (
+            <ul className={styles.dropdown}>
+              {categories.map((cat) => (
+                <li
+                  key={cat}
+                  onClick={() => {
+                    setCategory(cat)
+                    setOpen(false)
+                  }}
+                >
+                  <img src={categoryIcons[cat]} alt={cat} />
+                  {cat}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+
+      {/* 제목 입력 + API 자동 연동 */}
+      <div className={styles.field}>
+        <div className={styles.titleWrap}>
+          <label>제목</label>
+          <div className={styles.titleExtra}>
+            <img src="/icons/icon-link.svg" alt="API 연동" />
+            <span>API 자동 연동</span>
+          </div>
+        </div>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="작품 제목을 입력하세요"
+        />
+      </div>
+
+      {/* 포스터 이미지 */}
+      <div className={styles.field}>
+        <label>포스터 이미지</label>
+        <div className={styles.poster}>
+          {poster ? (
+            <img src={poster} alt={title} className={styles.posterImage} />
+          ) : (
+            <div className={styles.posterPlaceholder}>
+              <img src="/icons/icon-image.svg" alt="icon" />
+              <span>포스터가 자동으로 표시됩니다</span>
+            </div>
+          )}
+        </div>
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          onChange={(e) => {
+            const file = e.target.files[0]
+            if (!file) return
+            const reader = new FileReader()
+            reader.onloadend = () => setPoster(reader.result)
+            reader.readAsDataURL(file)
+          }}
+        />
+      </div>
+
+      {/* 줄거리 */}
+      <div className={styles.field}>
+        <label>줄거리</label>
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="간단한 줄거리를 입력하세요"
+        />
+      </div>
+
+      {/* 등장인물 */}
+      <div className={styles.field}>
+        <label>등장인물</label>
+        <input
+          type="text"
+          value={characters}
+          onChange={(e) => setCharacters(e.target.value)}
+          placeholder={
+            category === '애니메이션'
+              ? '예: 탄지로, 이노스케, 젠이츠'
+              : category === '드라마'
+              ? '예: 윤세리, 리정혁, 구승준'
+              : '예: 마석도, 장첸, 김옥분'
+          }
+        />
+      </div>
+
+      {/* 회차 정보 */}
+      <div className={styles.field}>
+        <label>회차 정보</label>
+        <input
+          type="number"
+          min="1"
+          value={episodeCount}
+          onChange={(e) => setEpisodeCount(e.target.value)}
+          placeholder={
+            category === '영화'
+              ? '예: 109 (분)'
+              : category === '드라마'
+              ? '예: 16 (회)'
+              : '예: 24 (화)'
+          }
+        />
+      </div>
+
+      {/* 즐겨찾기 토글 */}
+      <div className={`${styles.field} ${styles.favorite}`}>
+        <div className={styles.favoriteRow}>
+          <div className={styles.favoriteTitle}>
+            <img
+              src={favorite ? "/icons/icon-star2-filled.svg" : "/icons/icon-star2.svg"}
+              alt="즐겨찾기"
+              className={styles.favoriteIcon}
+            />
+            <span className={styles.favoriteText}>즐겨찾기</span>
+          </div>
+          <input
+            type="checkbox"
+            checked={favorite}
+            onChange={(e) => setFavorite(e.target.checked)}
+            className={styles.favoriteCheckbox}
+          />
+        </div>
+      </div>
+
+      {/* 버튼 */}
+      <div className={styles.actions}>
+        <button className={styles.submitBtn} onClick={handleSubmit}>
+          <img src="/icons/icon-check.svg" alt="icon" />
+          수정 완료
+        </button>
+        <button
+          type="button"
+          className={styles.cancelBtn}
+          onClick={() => setEditingItem(null)}
+        >
+          <img src="/icons/icon-close.svg" alt="icon" />
+          취소 (등록 폼으로 돌아가기)
+        </button>
+      </div>
+    </section>
   )
 }
 

@@ -17,18 +17,18 @@
     &::after {
       content: "수정 중";
       position: absolute;
-      top: 14px;
-      left: 14px;
-      background-color: #4caf50; // 녹색 배경
-      color: #fff;
+      top: $space-7;
+      left: $space-7;
+      background-color: $color-success-600;
+      color: $color-white;
       font-size: 0.75rem;
       font-weight: 700;
-      padding: 2px 6px;
+      padding: $space-1 $space-3;
       border-radius: 4px;
     }
 
     .actions button:nth-child(2) {
-      border: 1px solid #4caf50;
+      border: 1px solid $color-success-600;
     }
   }
 }
