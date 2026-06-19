@@ -15,6 +15,7 @@ const CreateForm = ({ archives, setArchives, editingItem, setEditingItem }) => {
   const [suggestions, setSuggestions] = useState([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [open, setOpen] = useState(false)
+  const [selectedIndex, setSelectedIndex] = useState(-1)
 
   const apiKey = import.meta.env.VITE_TMDB_API_KEY
 
@@ -25,6 +26,19 @@ const CreateForm = ({ archives, setArchives, editingItem, setEditingItem }) => {
   }
 
   const categories = Object.keys(categoryIcons)
+
+  const handleArrowNavigation = (direction) => {
+    if (!suggestions.length) return
+    setSelectedIndex(prev => {
+      let newIndex = prev
+      if (direction === 'up') {
+        newIndex = prev > 0 ? prev - 1 : suggestions.length - 1
+      } else if (direction === 'down') {
+        newIndex = prev < suggestions.length - 1 ? prev + 1 : 0
+      }
+      return newIndex
+    })
+  }
 
   const unitMap = {
     '애니메이션': '화',
@@ -99,6 +113,7 @@ const CreateForm = ({ archives, setArchives, editingItem, setEditingItem }) => {
         }))
 
       setSuggestions(combinedResults)
+      setSelectedIndex(-1)
       setShowSuggestions(true)
     } catch (error) {
       console.error(error)
@@ -253,16 +268,38 @@ const CreateForm = ({ archives, setArchives, editingItem, setEditingItem }) => {
             value={title}
             onChange={handleTitleChange}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && suggestions.length > 0) {
-                handleSelectTitle(suggestions[0]) // 첫 번째 결과 자동 선택
+              if (e.key === 'ArrowUp') {
+                e.preventDefault()
+                handleArrowNavigation('up')
+              }
+              if (e.key === 'ArrowDown') {
+                e.preventDefault()
+                handleArrowNavigation('down')
+              }
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                if (selectedIndex >= 0) {
+                  handleSelectTitle(suggestions[selectedIndex])
+                } else if (suggestions.length > 0) {
+                  handleSelectTitle(suggestions[0]) // 아무 것도 선택 안 했으면 첫 번째 자동 선택
+                }
               }
             }}
             placeholder="작품 제목을 입력하세요"
           />
           {showSuggestions && suggestions.length > 0 && (
             <ul className={styles.suggestions}>
-              {suggestions.map((item) => (
-                <li key={item.id} onClick={() => handleSelectTitle(item)}>
+              {suggestions.map((item, index) => (
+                <li
+                  key={item.id}
+                  ref={el => {
+                    if (index === selectedIndex && el) {
+                      el.scrollIntoView({ block: 'nearest' }) // ✅ 자동 스크롤
+                    }
+                  }}
+                  className={index === selectedIndex ? styles.active : ''}
+                  onClick={() => handleSelectTitle(item)}
+                >
                   {item.title}
                 </li>
               ))}
