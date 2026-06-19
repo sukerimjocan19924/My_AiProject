@@ -164,7 +164,8 @@
       padding: $space-4;
       cursor: pointer;
 
-      &:hover {
+      &:hover,
+      &.active {
         background: $color-primary-100;
       }
     }

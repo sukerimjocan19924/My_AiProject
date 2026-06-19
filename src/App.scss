@@ -22,6 +22,13 @@
       min-width: 28rem;
       position: relative;
 
+      &.selected {
+        .form-area,
+        .stats-area {
+          border-right: 2px solid $color-success-600;
+        }
+      }
+
       .edit-mode-banner {
         position: sticky;
         top: 0;
@@ -39,11 +46,6 @@
       .form-area {
         flex: 1;
         overflow-y: auto;
-      }
-
-      .form-area,
-      .stats-area {
-        border-right: 2px solid $color-success-600;
       }
     }
 
