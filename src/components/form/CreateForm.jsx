@@ -16,6 +16,8 @@ const CreateForm = ({ archives, setArchives, editingItem, setEditingItem }) => {
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [open, setOpen] = useState(false)
 
+  const apiKey = import.meta.env.VITE_TMDB_API_KEY
+
   const categoryIcons = {
     애니메이션: '/icons/icon-animation.svg',
     드라마: '/icons/icon-drama.svg',
@@ -46,23 +48,93 @@ const CreateForm = ({ archives, setArchives, editingItem, setEditingItem }) => {
     }
 
     try {
-      const res = await fetch(`/api/search?title=${value}`)
-      const data = await res.json()
-      setSuggestions(data)
+      let searchEndpoint = 'multi'
+      let discoverEndpoint = null
+      let genreFilter = null
+
+      if (category === '영화') {
+        searchEndpoint = 'movie'
+        discoverEndpoint = `discover/movie?api_key=${apiKey}&language=ko-KR&sort_by=popularity.desc`
+      } else if (category === '드라마') {
+        searchEndpoint = 'tv'
+        discoverEndpoint = `discover/tv?api_key=${apiKey}&language=ko-KR&with_genres=18&sort_by=popularity.desc`
+        genreFilter = 18
+      } else if (category === '애니메이션') {
+        searchEndpoint = 'tv'
+        discoverEndpoint = `discover/tv?api_key=${apiKey}&language=ko-KR&with_genres=16&sort_by=popularity.desc`
+        genreFilter = 16
+      }
+
+      // 1. 검색 API 호출
+      const searchRes = await fetch(
+        `https://api.themoviedb.org/3/search/${searchEndpoint}?api_key=${apiKey}&query=${encodeURIComponent(value)}&language=ko-KR`
+      )
+      const searchData = await searchRes.json()
+
+      // ✅ 장르 필터링 (드라마/애니메이션만 적용)
+      let filteredResults = searchData.results
+      if (genreFilter) {
+        filteredResults = filteredResults.filter(item => item.genre_ids?.includes(genreFilter))
+      }
+
+      // 2. Discover API 호출 (영화/드라마/애니메이션 구분)
+      const discoverRes = await fetch(`https://api.themoviedb.org/3/${discoverEndpoint}`)
+      const discoverData = await discoverRes.json()
+
+      // ✅ 중복 제거 후 합치기
+      const seen = new Set()
+      const combinedResults = [...filteredResults, ...(discoverData.results || [])]
+        .filter(item => {
+          if (seen.has(item.id)) return false
+          seen.add(item.id)
+          return true
+        })
+        .map(item => ({
+          id: item.id,
+          title: item.title || item.name,
+          poster: item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : '',
+          description: item.overview,
+          characters: '',
+          episodeCount: item.media_type === 'tv' ? item.number_of_episodes : ''
+        }))
+
+      setSuggestions(combinedResults)
       setShowSuggestions(true)
     } catch (error) {
       console.error(error)
     }
   }
 
-  const handleSelectTitle = (item) => {
-    setTitle(item.title)
-    setPoster(item.poster || '')
-    setDescription(item.description || '')
-    setCharacters(item.characters || '')
-    setEpisodeCount(item.episodeCount || '')
-    setShowSuggestions(false)
-    setFavorite(false)
+  const handleSelectTitle = async (item) => {
+    const url = category === '영화'
+      ? `https://api.themoviedb.org/3/movie/${item.id}?api_key=${apiKey}&language=ko-KR&append_to_response=credits`
+      : `https://api.themoviedb.org/3/tv/${item.id}?api_key=${apiKey}&language=ko-KR&append_to_response=credits`
+
+    try {
+      const res = await fetch(url)
+      const data = await res.json()
+
+      setTitle(item.title || item.name)
+      setPoster(data.poster_path ? `https://image.tmdb.org/t/p/w500${data.poster_path}` : '')
+      setDescription(data.overview || '')
+      setCharacters(data.credits?.cast?.slice(0, 5).map(c => c.name).join(', ') || '')
+
+      if (category === '드라마' || category === '애니메이션') {
+        const episodes =
+          data.number_of_episodes ??
+          (Array.isArray(data.seasons)
+            ? data.seasons.reduce((sum, s) => sum + (s.episode_count || 0), 0)
+            : 0)
+        setEpisodeCount(parseInt(episodes, 10) || '')
+      } else {
+        setEpisodeCount(data.runtime || '')
+      }
+
+      setShowSuggestions(false)
+      setFavorite(false)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   useEffect(() => {
@@ -180,6 +252,11 @@ const CreateForm = ({ archives, setArchives, editingItem, setEditingItem }) => {
             type="text"
             value={title}
             onChange={handleTitleChange}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && suggestions.length > 0) {
+                handleSelectTitle(suggestions[0]) // 첫 번째 결과 자동 선택
+              }
+            }}
             placeholder="작품 제목을 입력하세요"
           />
           {showSuggestions && suggestions.length > 0 && (
