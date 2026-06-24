@@ -5,7 +5,6 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  overflow: hidden;
   background: $color-gray-50;
 
   .layout {
@@ -22,27 +21,6 @@
       min-width: 28rem;
       position: relative;
 
-      &.selected {
-        .form-area,
-        .stats-area {
-          border-right: 2px solid $color-success-600;
-        }
-      }
-
-      .edit-mode-banner {
-        position: sticky;
-        top: 0;
-        background-color: $color-success-bg;
-        border-bottom: 2px solid $color-success-100;
-        font-weight: 800;
-        color: $color-success-600;
-        padding: $space-4 $space-6;
-        display: flex;
-        align-items: center;
-        gap: $space-4;
-        z-index: 10;
-      }
-
       .form-area {
         flex: 1;
         overflow-y: auto;
@@ -54,4 +32,139 @@
       overflow: hidden;
     }
   }
+
+  .floating-btn {
+    display: none;
+  }
+
+  .desktop-stats {
+    display: block;
+  }
+
+  .mobile-stats {
+    display: none;
+  }
+
+  .mobile-only {
+    display: none;
+  }
+}
+
+@media (max-width: 758px) {
+  .app {
+    .layout {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+
+      .sidebar {
+        display: none;
+      }
+
+      .content {
+        flex: 1;
+        padding: $space-4;
+      }
+
+      .desktop-stats {
+        display: none;
+      }
+
+      .mobile-stats {
+        display: block;
+        position: sticky;
+        bottom: 0;
+        background: $color-gray-100;
+        padding: $space-4;
+        border-top: 1px solid $color-gray-200;
+        z-index: 5;
+      }
+    }
+
+    .floating-btn {
+      display: block;
+      position: fixed;
+      right: $space-6;
+      bottom: $space-10;
+      width: $h-btn-lg;
+      height: $h-btn-lg;
+      border-radius: 50%;
+      background: $color-primary-600;
+      color: $color-white;
+      font-size: $font-size-lg;
+      font-weight: 700;
+      border: none;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.25s ease-in-out;
+
+      &:hover {
+        background: $color-primary-700;
+        transform: scale(1.05);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+
+    .form-fullscreen {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: $color-gray-50;
+      overflow-y: auto;
+      padding: $space-6;
+      z-index: 20;
+
+      .close-btn {
+        display: block;
+        margin-bottom: $space-4;
+        margin-left: auto;
+        background: none;
+        border: none;
+        font-size: $font-size-sm;
+        font-weight: 600;
+        text-align: right;
+        color: $color-primary-700;
+        cursor: pointer;
+      }
+
+      .edit-mode-banner {
+        margin-top: $space-6;
+        width: 100%;
+        background-color: $color-success-bg;
+        font-weight: 800;
+        color: $color-success-600;
+        padding: $space-4 $space-6;
+        display: flex;
+        align-items: center;
+        gap: $space-4;
+        z-index: 30;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    .mobile-only {
+      display: block;
+    }
+  }
+}
+
+.edit-mode-banner {
+  position: static;
+  top: 0;
+  background-color: $color-success-bg;
+  border-bottom: 2px solid $color-success-100;
+  font-weight: 800;
+  color: $color-success-600;
+  padding: $space-4 $space-6;
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+  z-index: 20;
 }
